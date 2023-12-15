@@ -1,0 +1,58 @@
+@startuml createSubscriptions
+
+actor User
+participant Controller
+participant Service
+database MongoDb
+
+User -> Controller: POST /api/subscriptions
+Controller -> Service: createSubscriptions(data)
+Service -> MongoDb: insertAll(subscriptions)
+MongoDb --> Service: savedSubscriptions
+Service --> Controller: CommonResponse(savedSubscriptions)
+Controller --> User: ResponseEntity<CommonResponse<List<Subscription>>>
+@enduml
+
+@startuml getSubscriptions
+actor User
+participant Controller
+participant Service
+database MongoDb
+
+User -> Controller: GET /api/subscriptions
+Controller -> Service: getSubscriptions(filterFields)
+Service -> MongoDb: count(query)
+Service -> MongoDb: find(query)
+MongoDb --> Service: count, subscriptions
+Service --> Controller: CommonResponse(Page<Subscription>)
+Controller --> User: ResponseEntity<CommonResponse<Object>>
+@enduml
+
+@startuml updateItems
+actor User
+participant Controller
+participant Service
+database MongoDb
+
+User -> Controller: PATCH /api/subscriptions
+Controller -> Service: updateItems(data)
+Service -> MongoDb: findById(subscriptionId)
+Service -> MongoDb: save(existingSubscription)
+MongoDb --> Service: existingSubscription
+Service --> Controller: CommonResponse(updatedSubscriptions)
+Controller --> User: ResponseEntity<CommonResponse<Object>>
+@enduml
+
+@startuml deleteItems
+actor User
+participant Controller
+participant Service
+database MongoDb
+
+User -> Controller: DELETE /api/subscriptions
+Controller -> Service: deleteItems(data)
+Service -> MongoDb: findAndRemove(query)
+MongoDb --> Service: deletedSubscription
+Service --> Controller: CommonResponse(deletedSubscriptions)
+Controller --> User: ResponseEntity<CommonResponse<List<Subscription>>>
+@enduml
